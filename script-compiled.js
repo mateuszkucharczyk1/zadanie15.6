@@ -1,98 +1,141 @@
-class Stopwatch {
-    constructor(display) {
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Stopwatch = function () {
+    function Stopwatch(display) {
+        _classCallCheck(this, Stopwatch);
+
         this.running = false;
         this.display = display;
         this.reset();
         this.print(this.times);
     }
 
-    reset() {
-        this.times = {
-            minutes: 0,
-            seconds: 0,
-            miliseconds: 0
-        };
-    }
-
-    print() {
-        this.display.innerText = this.format(this.times);
-    }
-
-    format(times) {
-        return `${pad0(times.minutes)}:${pad0(times.seconds)}:${pad0(Math.floor(times.miliseconds))}`;
-    }
-
-    start() {
-        if (!this.running) {
-            this.running = true;
-            this.watch = setInterval(() => this.step(), 10);
+    _createClass(Stopwatch, [{
+        key: 'reset',
+        value: function reset() {
+            this.times = {
+                minutes: 0,
+                seconds: 0,
+                miliseconds: 0
+            };
         }
-    }
-
-    step() {
-        if (!this.running) return;
-        this.calculate();
-        this.print();
-    }
-
-    calculate() {
-        this.times.miliseconds += 1;
-        if (this.times.miliseconds >= 100) {
-            this.times.seconds += 1;
-            this.times.miliseconds = 0;
+    }, {
+        key: 'print',
+        value: function print() {
+            this.display.innerText = this.format(this.times);
         }
-        if (this.times.seconds >= 60) {
-            this.times.minutes += 1;
-            this.times.seconds = 0;
+    }, {
+        key: 'format',
+        value: function format(times) {
+            return pad0(times.minutes) + ':' + pad0(times.seconds) + ':' + pad0(Math.floor(times.miliseconds));
         }
-    }
+    }, {
+        key: 'start',
+        value: function start() {
+            var _this = this;
 
-    stop() {
-        this.running = false;
-        clearInterval(this.watch);
-    }
+            if (!this.running) {
+                this.running = true;
+                this.watch = setInterval(function () {
+                    return _this.step();
+                }, 10);
+            }
+        }
+    }, {
+        key: 'step',
+        value: function step() {
+            if (!this.running) return;
+            this.calculate();
+            this.print();
+        }
+    }, {
+        key: 'calculate',
+        value: function calculate() {
+            this.times.miliseconds += 1;
+            if (this.times.miliseconds >= 100) {
+                this.times.seconds += 1;
+                this.times.miliseconds = 0;
+            }
+            if (this.times.seconds >= 60) {
+                this.times.minutes += 1;
+                this.times.seconds = 0;
+            }
+        }
+    }, {
+        key: 'stop',
+        value: function stop() {
+            this.running = false;
+            clearInterval(this.watch);
+        }
+    }, {
+        key: 'resetTimer',
+        value: function resetTimer() {
+            this.stop();
+            var span = document.querySelector('.results');
+            var li = document.createElement('li');
+            var time = document.createTextNode(this.format(this.times));
+            li.appendChild(time);
+            span.appendChild(li);
+            this.reset();
+            this.print();
+            var saveButton = document.getElementById('save');
+            cleanButton.classList.remove('hide');
+        }
+    }, {
+        key: 'save',
+        value: function save() {
+            var span = document.querySelector('.results');
+            // let li = span.querySelector('li');
+            // span.querySelectorAll('li').forEach(function(li) {
+            //     span.removeChild(li);
+            // });
+            var li = document.createElement('li');
+            li.innerHTML = this.format(this.times);
+            span.appendChild(li);
+        }
+    }, {
+        key: 'clean',
+        value: function clean() {
+            document.querySelector('.results').innerHTML = '';
+        }
+    }]);
 
-    resetTimer() {
-        this.stop();
-        let span = document.querySelector('.results');
-        var li = document.createElement('li');
-        var time = document.createTextNode(this.format(this.times));
-        li.appendChild(time);
-        span.appendChild(li);
-        this.reset();
-        this.print();
-        let saveButton = document.getElementById('save');
-        cleanButton.classList.remove('hide');
-    }
+    return Stopwatch;
+}();
 
-    save() {
-        let span = document.querySelector('.results');
-        let li = span.querySelector('li');
-        span.querySelectorAll('li').forEach(function(li) {
-            span.removeChild(li);
-        });
+var stopwatch = new Stopwatch(document.querySelector('.stopwatch'));
 
-    }
-}
+var startButton = document.getElementById('start');
+startButton.addEventListener('click', function () {
+    return stopwatch.start();
+});
 
-const stopwatch = new Stopwatch(
-    document.querySelector('.stopwatch'));
+var stopButton = document.getElementById('stop');
+stopButton.addEventListener('click', function () {
+    return stopwatch.stop();
+});
 
-let startButton = document.getElementById('start');
-startButton.addEventListener('click', () => stopwatch.start());
+var resetButton = document.getElementById('reset');
+resetButton.addEventListener('click', function () {
+    return stopwatch.reset();
+});
 
-let stopButton = document.getElementById('stop');
-stopButton.addEventListener('click', () => stopwatch.stop());
+var saveButton = document.getElementById('save');
+saveButton.addEventListener('click', function () {
+    return stopwatch.save();
+});
 
-let resetButton = document.getElementById('reset');
-resetButton.addEventListener('click', () => stopwatch.resetTimer());
-
-let cleanButton = document.getElementById('save');
-cleanButton.addEventListener('click', () => stopwatch.clean());
-
+var cleanButton = document.getElementById('clean');
+cleanButton.addEventListener('click', function () {
+    return stopwatch.clean();
+});
 
 function pad0(value) {
-    let result = value.toString();
+    var result = value.toString();
     if (result.length < 2) {
         result = '0' + result;
     }

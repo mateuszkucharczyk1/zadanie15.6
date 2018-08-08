@@ -4,6 +4,7 @@
   "description": "",
   "main": "script-compiled.js",
   "scripts": {
+    "watch": "babel script.js --watch --out-file script-compiled.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
